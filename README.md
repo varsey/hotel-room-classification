@@ -1,12 +1,10 @@
-# О! Хакатон — название команды – название трека
-
+# О! Хакатон — varsey – Трек 2 "тэггирование тарифов"
 > 
 > Описание треков:
 > 
-> - [Динамическое ценообразование](https://docs.ostrovok.tech/s/hackathon-track-1)
 > - [Тегирование тарифов](https://docs.ostrovok.tech/s/hackathon-track-2)
->
-> Примечание: ссылки на описания треков можно удалить
+> - [Основное описание](https://ostrovok.tech/hackathon/data/track_2/track_2_description.pdf)
+> - [Как создать репо](https://docs.ostrovok.tech/s/how-to-create-repo)
 > 
 
 ## Описание решения
