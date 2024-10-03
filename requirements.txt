@@ -4,3 +4,4 @@ scikit-learn~=1.5.2
 setuptools~=68.2.0
 faiss-cpu~=1.8.0.post1
 numpy~=1.26.4
+h2o~=3.46.0.5
