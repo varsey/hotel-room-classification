@@ -1,7 +1,12 @@
 import pandas as pd
 
-from src.modules.decorators import duration
 from src.modules.utils import predict
+from src.modules.decorators import duration
+from src.modules.logger import DicLogger, LOGGING_CONFIG
+
+log = DicLogger(LOGGING_CONFIG).log
+
+
 N = 40_000
 
 @duration
@@ -14,7 +19,7 @@ def run_prediction(data_d, w2v_model, gbm_model):
 
     result = pd.DataFrame()
     for indx in range(0, len(cand), N):
-        # print('###', indx)
+        log.info(f'Working on batch {indx}')
         documents_preds = predict(cand[indx:indx + N], w2v_model, gbm_model).as_data_frame()
         documents = pd.concat([
             documents_preds,

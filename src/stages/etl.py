@@ -1,11 +1,11 @@
+import os
 import pandas as pd
 
 from src.modules.utils import simple_process_item
-from src.modules.helpers import get_tfidf_artifacts, create_index_hnsw
 
 
 def get_train_data(target: str) -> (pd.DataFrame, pd.DataFrame):
-    data = pd.read_csv('/opt/app/rates_clean.csv', engine="pyarrow")
+    data = pd.read_csv(f'{os.getcwd()}/data/sample_clean.csv', engine="pyarrow")
     data['bedding'] = data['bedding'].fillna('undefined')
     data['rate_name'] = data['rate_name'].fillna('undefined')
 
@@ -19,9 +19,8 @@ def get_train_data(target: str) -> (pd.DataFrame, pd.DataFrame):
 
     data = pd.concat(
         [
-            data[data[target] == 'double/double-or-twin'].sample(2000, random_state=42),
-            data[~(data[target] == 'double/double-or-twin')],
-            data[~(data[target] == 'undefined')],
+            data[data[target] == 'double/double-or-twin'].sample(200, random_state=42),
+            data[~(data[target].str.contains('double/double-or-twin|undefined'))],
         ],
         axis='rows',
     ).reset_index(drop=True)
@@ -42,10 +41,3 @@ def prepare_data(path) -> pd.DataFrame:
 
     data_d = data_d[~(data_d['rate_name_cleaned'] == 'name')].reset_index(drop=True)
     return data_d
-
-
-def get_hnsw_index(data4index: pd.DataFrame):
-    documents = data4index['rate_name_cleaned'].to_list()
-    tfidf_matrix, dimension, vectorizer = get_tfidf_artifacts(documents)
-    index = create_index_hnsw(tfidf_matrix, dimension)
-    return index, vectorizer

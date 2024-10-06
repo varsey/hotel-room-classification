@@ -1,12 +1,21 @@
+import os
+
 import pandas as pd
 
 from src.modules.utils import simple_process_item
 from src.modules.decorators import duration
-from src.modules.helpers import find_similar_pairs
-from src.stages.etl import get_hnsw_index
+from src.modules.helpers import find_similar_pairs, get_tfidf_artifacts, create_index_hnsw
+
+TARGET = 'bedding'
+
+def get_hnsw_index(data4index: pd.DataFrame):
+    documents = data4index['rate_name_cleaned'].to_list()
+    tfidf_matrix, dimension, vectorizer = get_tfidf_artifacts(documents)
+    index = create_index_hnsw(tfidf_matrix, dimension)
+    return index, vectorizer
 
 def get_data4index(target: str) -> (pd.DataFrame, pd.DataFrame):
-    data4index = pd.read_csv('/opt/app/rates_clean.csv', engine="pyarrow")
+    data4index = pd.read_csv(f'{os.getcwd()}/data/sample_clean.csv', engine="pyarrow")
     data4index['bedding'] = data4index['bedding'].fillna('undefined')
     data4index['rate_name'] = data4index['rate_name'].fillna('undefined')
 
@@ -16,8 +25,7 @@ def get_data4index(target: str) -> (pd.DataFrame, pd.DataFrame):
     data4index = pd.concat(
         [
             data4index[data4index[target] == 'double/double-or-twin'].sample(100, random_state=42),
-            data4index[~(data4index[target] == 'double/double-or-twin')],
-            data4index[~(data4index[target] == 'undefined')],
+            data4index[~(data4index[target].str.contains('double/double-or-twin|undefined'))],
         ],
         axis='rows',
     ).reset_index(drop=True)
@@ -32,7 +40,7 @@ def get_closest(name_cleaned):
     close_pair = data4index.iloc[indices[0][0]].to_dict()
     return close_pair['bedding']
 
-def fix_predict(name_cleaned):
+def split_predict(name_cleaned):
     if name_cleaned == 'undefined':
         return 'undefined'
     elif name_cleaned.count('bed') > 1:
@@ -42,13 +50,15 @@ def fix_predict(name_cleaned):
     elif 'single bed' in name_cleaned:
         return 'single bed'
     else:
-        # TO-DO use get_closest here. It's too clow for now
-        return 'undefined'
+        query_vector = vectorizer.transform([name_cleaned]).toarray().astype('float32')
+        _, indices = index.search(query_vector.reshape(1, -1), 1)
+        dict_b = data4index.iloc[indices[0][0]].to_dict()
+        return dict_b[TARGET]
 
 @duration
 def apply_split_to_other_cat(df):
     if 'predict' not in df.columns or 'score' not in df.columns:
         raise ValueError("DataFrame must contain 'value' and 'score' columns")
     mask = (df['predict'] != 'double/double-or-twin')
-    df.loc[mask, 'predict'] = df.loc[mask, 'rate_name_cleaned'].apply(fix_predict)
+    df.loc[mask, 'predict'] = df.loc[mask, 'rate_name_cleaned'].apply(split_predict)
     return df

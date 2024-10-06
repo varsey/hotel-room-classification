@@ -13,13 +13,13 @@ def get_view(query):
     return 'undefined'
 
 def get_capacity(query):
-    if 'triple' in query or '3' in query:
+    if 'triple' in query or '3' or 'three' in query:
         return 'triple'
     elif 'quadruple' in query or '2 queen bed' in query or '2 double bed' in query or 'two queen bed' in query or 'two double bed' in query:
         return 'quadruple'
-    elif '6'  in query or 'sextuple' in query:
+    elif '6'  in query or 'sextuple' or 'six' in query:
         return 'sextuple'
-    elif '5' in query or 'quintuple' in query:
+    elif '5' in query or 'quintuple' or 'five' in query:
         return 'quintuple'
     elif query.count('single') == 1 or query.count('sgl') == 1 or query.count('s g l') == 1:
         return 'single'
