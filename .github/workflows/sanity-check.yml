@@ -1,5 +1,0 @@
-name: Sanity Check
-on: [push]
-jobs:
-  sanity-check:
-    uses: ostrovok-hackathon-2024/actions/.github/workflows/track-2-sanity-check.yml@main
