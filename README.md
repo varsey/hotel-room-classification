@@ -1,12 +1,4 @@
-# О! Хакатон — varsey – Трек 2 "тэггирование тарифов"
-
-> Описание треков:
->
-> - [Тегирование тарифов](https://docs.ostrovok.tech/s/hackathon-track-2)
-> - [Основное описание](https://ostrovok.tech/hackathon/data/track_2/track_2_description.pdf)
-> - [Как создать репо](https://docs.ostrovok.tech/s/how-to-create-repo)
-
-## Технический стек
+Технический стек
 
 * *H2O* (java) automl для классификации - [ссылка](https://docs.h2o.ai/h2o/latest-stable/h2o-docs/automl.html)
 * *FAISS* (c++) для индексации и поиска похожих - [ссылка](https://github.com/facebookresearch/faiss)
